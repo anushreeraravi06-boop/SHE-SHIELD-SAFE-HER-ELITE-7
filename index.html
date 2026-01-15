@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>She-Shield Safety App</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5efe6;
+  color:#3a2c2c;
+}
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:16px;
+}
+h1{text-align:center;color:#e07a5f}
+.card{
+  background:#fffaf3;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08)
+}
+.card h3{margin:0 0 8px;color:#e07a5f}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer
+}
+.primary{background:#e07a5f;color:white}
+.secondary{background:#f4a261;color:white}
+.muted{background:#eee}
+input{
+  width:100%;
+  padding:10px;
+  margin-bottom:8px;
+  border-radius:8px;
+  border:1px solid #ccc
+}
+small{opacity:.7}
+#enableScreen{
+  position:fixed;inset:0;
+  background:#000000c0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999
+}
+#enableBox{
+  background:#fffaf3;
+  padding:20px;
+  border-radius:14px;
+  text-align:center
+}
+#flash{
+  position:fixed;inset:0;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+  z-index:9998
+}
+</style>
+</head>
+
+<body>
+
+<!-- ENABLE SCREEN -->
+<div id="enableScreen">
+  <div id="enableBox">
+    <h2>Enable Safety System</h2>
+    <p><small>Required for sound, mic, motion & location</small></p>
+    <button class="primary" onclick="enableSystem()">Enable</button>
+  </div>
+</div>
+
+<div id="flash"></div>
+
+<div class="container">
+<h1>She-Shield</h1>
+
+<div class="card">
+  <h3>Siren</h3>
+  <button class="primary" onclick="startSiren()">🔊 Start Siren</button>
+  <button class="muted" onclick="stopSiren()">Stop Siren</button>
+</div>
+
+<div class="card">
+  <h3>Emergency SOS</h3>
+  <button class="primary" onclick="emergencySOS()">🚨 Emergency SOS</button>
+</div>
+
+<div class="card">
+  <h3>Share Live Location</h3>
+  <button class="secondary" onclick="shareLocation()">📍 Share Location</button>
+</div>
+
+<div class="card">
+  <h3>Primary Contacts</h3>
+  <input id="c1" placeholder="Primary Contact 1 (with country code)">
+  <input id="c2" placeholder="Primary Contact 2 (with country code)">
+  <button class="secondary" onclick="saveContacts()">💾 Save Contacts</button>
+  <div id="savedContacts"><small>No contacts saved</small></div>
+</div>
+
+<div class="card">
+  <h3>Voice SOS</h3>
+  <button class="secondary" onclick="startVoice()">🎙️ Say “HELP ME”</button>
+  <button class="muted" id="sendToSecond" style="display:none"
+          onclick="sendToSecondContact()">Send SOS to Contact 2</button>
+</div>
+
+<div class="card">
+  <h3>Emergency Helplines</h3>
+  <a href="tel:112"><button class="primary">🚔 Police 112</button></a><br><br>
+  <a href="tel:181"><button class="secondary">👩 Women Helpline 181</button></a><br><br>
+  <a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
+</div>
+
+<div id="status"><small>Status: Ready</small></div>
+</div>
+
+<script>
+let audioCtx, osc, recognition;
+let lastShake = 0;
+const KEY="she_shield_contacts";
+
+/* ENABLE */
+function enableSystem(){
+  document.getElementById("enableScreen").style.display="none";
+  audioCtx=new (window.AudioContext||webkitAudioContext)();
+  audioCtx.resume();
+  initShake();
+  loadContacts();
+  setStatus("System enabled");
+}
+
+/* SIREN */
+function startSiren(){
+  osc=audioCtx.createOscillator();
+  osc.type="sawtooth";
+  osc.frequency.value=700;
+  osc.connect(audioCtx.destination);
+  osc.start();
+  flash();
+}
+function stopSiren(){osc?.stop();}
+
+/* FLASH */
+function flash(){
+  const f=document.getElementById("flash");
+  let i=0;
+  const t=setInterval(()=>{
+    f.style.opacity=i%2?0.8:0;
+    i++; if(i>6){clearInterval(t);f.style.opacity=0;}
+  },300);
+}
+
+/* CONTACTS */
+function saveContacts(){
+  const c1=document.getElementById("c1").value.trim();
+  const c2=document.getElementById("c2").value.trim();
+  localStorage.setItem(KEY,JSON.stringify({c1,c2}));
+  loadContacts();
+}
+function loadContacts(){
+  const d=JSON.parse(localStorage.getItem(KEY)||"{}");
+  if(!d.c1){
+    document.getElementById("savedContacts").innerHTML="<small>No contacts saved</small>";
+    return;
+  }
+  document.getElementById("savedContacts").innerHTML=
+    `<small>Contact 1: ${d.c1}<br>Contact 2: ${d.c2||"Not set"}</small>`;
+}
+
+/* MESSAGE */
+function message(lat,lon){
+  return `I need help immediately.\nMy location: https://maps.google.com/?q=${lat},${lon}`;
+}
+
+/* SOS */
+function emergencySOS(){
+  startSiren();
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const d=JSON.parse(localStorage.getItem(KEY)||"{}");
+    if(d.c1){
+      window.open(
+        `https://wa.me/${d.c1}?text=${encodeURIComponent(message(pos.coords.latitude,pos.coords.longitude))}`,
+        "_blank"
+      );
+    }
+  });
+  setStatus("SOS sent to primary contact");
+}
+
+/* SHARE LOCATION */
+function shareLocation(){
+  navigator.geolocation.getCurrentPosition(pos=>{
+    window.open(
+      "https://wa.me/?text="+encodeURIComponent(message(pos.coords.latitude,pos.coords.longitude)),
+      "_blank"
+    );
+  });
+}
+
+/* VOICE */
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert("Voice not supported");return;}
+  recognition=new SR();
+  recognition.lang="en-IN";
+  recognition.onresult=e=>{
+    const t=e.results[0][0].transcript.toLowerCase();
+    if(t.includes("help")){
+      emergencySOS();
+      document.getElementById("sendToSecond").style.display="block";
+    }
+  };
+  recognition.start();
+  setStatus("Listening… say HELP ME");
+}
+
+/* CONTACT 2 */
+function sendToSecondContact(){
+  const d=JSON.parse(localStorage.getItem(KEY)||"{}");
+  if(!d.c2){alert("Second contact not saved");return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    window.open(
+      `https://wa.me/${d.c2}?text=${encodeURIComponent(message(pos.coords.latitude,pos.coords.longitude))}`,
+      "_blank"
+    );
+  });
+}
+
+/* SHAKE */
+function initShake(){
+  window.addEventListener("devicemotion",e=>{
+    const a=e.accelerationIncludingGravity;
+    if(!a)return;
+    const g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+    const now=Date.now();
+    if(g>22 && now-lastShake>2000){
+      lastShake=now;
+      emergencySOS();
+    }
+  });
+}
+
+/* STATUS */
+function setStatus(t){
+  document.getElementById("status").innerHTML="<small>Status: "+t+"</small>";
+}
+</script>
+
+</body>
+</html>
