@@ -17,17 +17,10 @@ body{
   margin:auto;
   padding:16px;
 }
-header{
-  text-align:center;
-}
-header img{
-  width:90px;
-  margin-bottom:6px;
-}
-h1{
-  color:#e07a5f;
-  margin:6px 0 16px;
-}
+header{text-align:center}
+header img{width:90px;margin-bottom:6px}
+h1{color:#e07a5f;margin:6px 0 16px}
+
 .card{
   background:#fffaf3;
   padding:14px;
@@ -36,6 +29,7 @@ h1{
   box-shadow:0 6px 16px rgba(0,0,0,.1);
 }
 .card h3{color:#e07a5f;margin-top:0}
+
 button{
   width:100%;
   padding:14px;
@@ -49,6 +43,7 @@ button{
 .primary{background:#e07a5f;color:#fff}
 .secondary{background:#f4a261;color:#fff}
 .muted{background:#ddd}
+
 input{
   width:100%;
   padding:10px;
@@ -56,12 +51,15 @@ input{
   border:1px solid #ccc;
   margin-bottom:6px;
 }
+
 footer{
   text-align:center;
   padding:14px;
   font-size:14px;
   color:#7a5c3a;
 }
+
+/* Enable screen */
 #enableScreen{
   position:fixed;
   inset:0;
@@ -77,12 +75,33 @@ footer{
   border-radius:14px;
   text-align:center;
 }
+
+/* Safety tips screen */
+#tipsScreen{
+  position:fixed;
+  inset:0;
+  background:#000;
+  color:#fff;
+  display:none;
+  z-index:10000;
+  padding:20px;
+  overflow-y:auto;
+}
+#tipsScreen h2{color:#f4a261;text-align:center}
+#closeTips{
+  background:#e07a5f;
+  color:#fff;
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
+  margin-bottom:14px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- ENABLE SCREEN -->
+<!-- ENABLE -->
 <div id="enableScreen">
   <div id="enableBox">
     <h2>Enable Safety System</h2>
@@ -91,23 +110,35 @@ footer{
   </div>
 </div>
 
+<!-- SAFETY TIPS FULL SCREEN -->
+<div id="tipsScreen">
+  <div id="closeTips" onclick="closeTips()">⬅ Close</div>
+  <h2>Personal Safety & Self-Defense Tips</h2>
+  <ol>
+    <li>Stay alert and avoid distractions like headphones.</li>
+    <li>Trust your instincts. If something feels wrong, leave.</li>
+    <li>Walk confidently and maintain eye contact.</li>
+    <li>Avoid isolated or poorly lit areas.</li>
+    <li>Keep emergency numbers on speed dial.</li>
+    <li>Target vulnerable areas: eyes, nose, throat, groin.</li>
+    <li>Use loud voice to attract attention.</li>
+    <li>Carry personal safety tools if legal.</li>
+    <li>Share live location with trusted contacts.</li>
+    <li>Change routines regularly.</li>
+    <li>Stay near crowds when feeling unsafe.</li>
+    <li>Lock doors and windows properly.</li>
+    <li>Learn basic self-defense techniques.</li>
+    <li>Do not reveal personal information to strangers.</li>
+    <li>Use She-Shield SOS immediately when in danger.</li>
+  </ol>
+</div>
+
 <div class="container">
 
 <header>
-  <img src="logo.png.jpeg" alt="She-Shield Logo">
+  <img src="logo.png.jpeg">
   <h1>She-Shield</h1>
 </header>
-
-<div class="card">
-  <h3>Trusted Contacts (Max 5)</h3>
-  <input id="c1" placeholder="Contact 1 (with country code)">
-  <input id="c2" placeholder="Contact 2">
-  <input id="c3" placeholder="Contact 3">
-  <input id="c4" placeholder="Contact 4">
-  <input id="c5" placeholder="Contact 5">
-  <button class="secondary" onclick="saveContacts()">Save Contacts</button>
-  <div id="savedContacts"></div>
-</div>
 
 <div class="card">
   <h3>Siren Alert</h3>
@@ -142,8 +173,20 @@ footer{
 </div>
 
 <div class="card">
-  <h3>Safety Tips & Self-Defense</h3>
-  <button class="muted" onclick="showTips()">🛡️ View Safety Tips</button>
+  <h3>Safety Tips</h3>
+  <button class="muted" onclick="openTips()">🛡️ View Safety Tips</button>
+</div>
+
+<!-- CONTACTS MOVED DOWN -->
+<div class="card">
+  <h3>Trusted Contacts (Max 5)</h3>
+  <input id="c1" placeholder="Contact 1 (with country code)">
+  <input id="c2" placeholder="Contact 2">
+  <input id="c3" placeholder="Contact 3">
+  <input id="c4" placeholder="Contact 4">
+  <input id="c5" placeholder="Contact 5">
+  <button class="secondary" onclick="saveContacts()">Save Contacts</button>
+  <div id="savedContacts"></div>
 </div>
 
 <div class="card">
@@ -160,31 +203,24 @@ Designed and Developed by <strong>Elite 7</strong>
 </div>
 
 <script>
-let audioCtx, osc;
-let countdownTimer;
+let audioCtx, osc, countdownTimer;
 
 function enableSystem(){
-  audioCtx = new (window.AudioContext||webkitAudioContext)();
+  audioCtx=new (window.AudioContext||webkitAudioContext)();
   audioCtx.resume();
   document.getElementById("enableScreen").style.display="none";
-  initShake();
-  loadContacts();
+  initShake(); loadContacts();
 }
 
-/* LOUD SIREN */
 function startSiren(){
-  if(!audioCtx) return;
-  osc = audioCtx.createOscillator();
+  osc=audioCtx.createOscillator();
   osc.type="square";
-  osc.frequency.setValueAtTime(900,audioCtx.currentTime);
+  osc.frequency.value=900;
   osc.connect(audioCtx.destination);
   osc.start();
 }
-function stopSiren(){
-  if(osc) osc.stop();
-}
+function stopSiren(){ if(osc) osc.stop(); }
 
-/* CONTACTS */
 function saveContacts(){
   const arr=[c1.value,c2.value,c3.value,c4.value,c5.value].filter(x=>x);
   localStorage.setItem("contacts",JSON.stringify(arr));
@@ -192,98 +228,59 @@ function saveContacts(){
 }
 function loadContacts(){
   const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
-  savedContacts.innerHTML="Saved: "+arr.join(", ");
+  savedContacts.innerText=arr.length?"Saved: "+arr.join(", "):"No contacts saved";
 }
 
-/* SEND SOS */
 function sendSOS(){
   const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
   if(!arr.length) return alert("No contacts saved");
   navigator.geolocation.getCurrentPosition(p=>{
     const msg=`HELP ME!\nLocation: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
-    arr.forEach(n=>{
-      window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`,"_blank");
-    });
+    arr.forEach(n=>window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`));
   });
 }
+function triggerSOS(){ startSiren(); sendSOS(); }
 
-function triggerSOS(){
-  startSiren();
-  sendSOS();
-}
-
-/* COUNTDOWN */
 function startCountdown(){
   let t=10;
   countText.innerText="Countdown: "+t;
   countdownTimer=setInterval(()=>{
-    t--;
-    countText.innerText="Countdown: "+t;
-    if(t<=0){
-      clearInterval(countdownTimer);
-      triggerSOS();
-      countText.innerText="SOS Triggered";
-    }
+    t--; countText.innerText="Countdown: "+t;
+    if(t<=0){ clearInterval(countdownTimer); triggerSOS(); }
   },1000);
 }
 
-/* VOICE SOS */
 function startVoice(){
   const SR=window.SpeechRecognition||webkitSpeechRecognition;
-  if(!SR) return alert("Voice not supported");
   const r=new SR();
-  r.onresult=e=>{
-    if(e.results[0][0].transcript.toLowerCase().includes("help")){
-      triggerSOS();
-    }
-  };
+  r.onresult=e=>{ if(e.results[0][0].transcript.toLowerCase().includes("help")) triggerSOS(); };
   r.start();
 }
 
-/* FAKE CALL */
 function fakeCall(){
-  const u=new SpeechSynthesisUtterance(
-    "Hello. Where are you? Why haven't you reached yet? "+
-    "There are ministers and senior officials here. Come immediately. Bye."
-  );
-  u.pitch=0.6;
-  u.rate=0.9;
-  speechSynthesis.speak(u);
+  speechSynthesis.speak(new SpeechSynthesisUtterance(
+    "Hello, where are you? Ministers and senior officials are waiting. Come immediately. Bye."
+  ));
 }
 
-/* SHAKE SOS */
 function initShake(){
   let last=0;
   window.addEventListener("devicemotion",e=>{
     const a=e.accelerationIncludingGravity;
-    if(!a) return;
-    const g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
-    const now=Date.now();
-    if(g>22 && now-last>2000){
-      last=now;
-      triggerSOS();
+    if(Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z)>22 && Date.now()-last>2000){
+      last=Date.now(); triggerSOS();
     }
   });
 }
 
-/* LOCATION */
 function shareLocation(){
   navigator.geolocation.getCurrentPosition(p=>{
     window.open(`https://wa.me/?text=My location: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
   });
 }
 
-/* SAFETY TIPS */
-function showTips(){
-  alert(
-    "SAFETY TIPS:\n"+
-    "• Stay alert and confident\n"+
-    "• Target eyes, nose, groin if attacked\n"+
-    "• Use voice loudly to attract attention\n"+
-    "• Run to crowded areas\n"+
-    "• Use She-Shield SOS immediately"
-  );
-}
+function openTips(){ tipsScreen.style.display="block"; }
+function closeTips(){ tipsScreen.style.display="none"; }
 </script>
 
 </body>
