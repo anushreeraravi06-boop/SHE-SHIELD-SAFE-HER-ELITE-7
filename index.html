@@ -3,29 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>She-Shield | Step-by-Step Safety</title>
+<title>She-Shield</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial,sans-serif;
+  font-family:Arial, sans-serif;
   background:#f5efe6;
   color:#3a2c2c;
 }
 .container{
-  max-width:420px;
+  max-width:430px;
   margin:auto;
   padding:16px;
 }
-h1{text-align:center;color:#e07a5f}
-.step{
+header{
+  text-align:center;
+}
+header img{
+  width:90px;
+  margin-bottom:6px;
+}
+h1{
+  color:#e07a5f;
+  margin:6px 0 16px;
+}
+.card{
   background:#fffaf3;
   padding:14px;
   border-radius:14px;
   margin-bottom:14px;
-  box-shadow:0 6px 16px rgba(0,0,0,.08)
+  box-shadow:0 6px 16px rgba(0,0,0,.1);
 }
-.step h3{margin:0 0 8px;color:#e07a5f}
+.card h3{color:#e07a5f;margin-top:0}
 button{
   width:100%;
   padding:14px;
@@ -33,54 +43,39 @@ button{
   border-radius:12px;
   font-size:16px;
   font-weight:bold;
-  cursor:pointer
+  cursor:pointer;
+  margin-top:6px;
 }
-.primary{background:#e07a5f;color:white}
-.secondary{background:#f4a261;color:white}
-.muted{background:#eee}
+.primary{background:#e07a5f;color:#fff}
+.secondary{background:#f4a261;color:#fff}
+.muted{background:#ddd}
 input{
   width:100%;
   padding:10px;
-  margin-bottom:8px;
   border-radius:8px;
-  border:1px solid #ccc
+  border:1px solid #ccc;
+  margin-bottom:6px;
 }
-small{opacity:.7}
-.badge{
-  background:#f4a261;
-  color:white;
-  padding:2px 8px;
-  border-radius:8px;
-  font-size:12px;
-  display:inline-block;
-  margin-bottom:6px
+footer{
+  text-align:center;
+  padding:14px;
+  font-size:14px;
+  color:#7a5c3a;
 }
 #enableScreen{
-  position:fixed;inset:0;
-  background:#000000c0;
+  position:fixed;
+  inset:0;
+  background:#000000cc;
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:9999
+  z-index:9999;
 }
 #enableBox{
   background:#fffaf3;
   padding:20px;
   border-radius:14px;
-  text-align:center
-}
-#flash{
-  position:fixed;inset:0;
-  background:white;
-  opacity:0;
-  pointer-events:none;
-  z-index:9998
-}
-footer{
   text-align:center;
-  padding:16px;
-  font-size:14px;
-  color:#6b4b3e;
 }
 </style>
 </head>
@@ -91,211 +86,203 @@ footer{
 <div id="enableScreen">
   <div id="enableBox">
     <h2>Enable Safety System</h2>
-    <p><small>Required for sound, mic, motion & location</small></p>
+    <p>Required for sound, motion & location</p>
     <button class="primary" onclick="enableSystem()">Enable</button>
   </div>
 </div>
 
-<div id="flash"></div>
-
 <div class="container">
 
-<!-- LOGO -->
-<div style="text-align:center;margin-bottom:10px;">
-  <img src="logo.png.jpeg" alt="She Shield Logo" style="width:120px;">
+<header>
+  <img src="logo.png.jpeg" alt="She-Shield Logo">
+  <h1>She-Shield</h1>
+</header>
+
+<div class="card">
+  <h3>Trusted Contacts (Max 5)</h3>
+  <input id="c1" placeholder="Contact 1 (with country code)">
+  <input id="c2" placeholder="Contact 2">
+  <input id="c3" placeholder="Contact 3">
+  <input id="c4" placeholder="Contact 4">
+  <input id="c5" placeholder="Contact 5">
+  <button class="secondary" onclick="saveContacts()">Save Contacts</button>
+  <div id="savedContacts"></div>
 </div>
 
-<h1>She-Shield</h1>
-
-<!-- SIREN -->
-<div class="step">
-  <span class="badge">STEP 1</span>
+<div class="card">
   <h3>Siren Alert</h3>
   <button class="primary" onclick="startSiren()">🔊 Start Siren</button>
   <button class="muted" onclick="stopSiren()">Stop Siren</button>
 </div>
 
-<!-- EMERGENCY SOS -->
-<div class="step">
-  <span class="badge">STEP 2</span>
+<div class="card">
   <h3>Emergency SOS</h3>
-  <button class="primary" onclick="emergencySOS()">🚨 Emergency SOS</button>
+  <button class="primary" onclick="triggerSOS()">🚨 Emergency SOS</button>
 </div>
 
-<!-- LIVE LOCATION -->
-<div class="step">
-  <span class="badge">STEP 3</span>
-  <h3>Live Location</h3>
-  <button class="secondary" onclick="shareLiveLocation()">📍 Share Live Location</button>
+<div class="card">
+  <h3>Auto SOS Countdown</h3>
+  <button class="secondary" onclick="startCountdown()">⏳ Start 10-Second Countdown</button>
+  <p id="countText">Not started</p>
 </div>
 
-<!-- CONTACT -->
-<div class="step">
-  <span class="badge">STEP 4</span>
-  <h3>Trusted Contact</h3>
-  <input id="contactName" placeholder="Contact Name">
-  <input id="contactPhone" placeholder="Phone (with country code)">
-  <button class="secondary" onclick="saveContact()">💾 Save Contact</button>
-  <div id="contactList"><small>No contact saved</small></div>
-</div>
-
-<!-- VOICE SOS -->
-<div class="step">
-  <span class="badge">STEP 5</span>
+<div class="card">
   <h3>Voice SOS</h3>
   <button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
 </div>
 
-<!-- FAKE CALL -->
-<div class="step">
-  <span class="badge">STEP 6</span>
-  <h3>Fake Call</h3>
-  <button class="secondary" onclick="fakeCall()">📞 Fake Incoming Call</button>
+<div class="card">
+  <h3>Fake Incoming Call</h3>
+  <button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
 </div>
 
-<!-- HELPLINES -->
-<div class="step">
-  <span class="badge">STEP 7</span>
+<div class="card">
+  <h3>Live Location</h3>
+  <button class="secondary" onclick="shareLocation()">📍 Share Location</button>
+</div>
+
+<div class="card">
+  <h3>Safety Tips & Self-Defense</h3>
+  <button class="muted" onclick="showTips()">🛡️ View Safety Tips</button>
+</div>
+
+<div class="card">
   <h3>Emergency Helplines</h3>
-  <a href="tel:112"><button class="primary">🚔 Police 112</button></a><br><br>
-  <a href="tel:181"><button class="secondary">👩 Women Helpline 181</button></a><br><br>
-  <a href="tel:108"><button class="secondary">🚑 Ambulance 108</button></a>
-</div>
-
-<div id="status"><small>Status: Ready</small></div>
-
+  <a href="tel:112"><button class="primary">🚔 Police 112</button></a>
+  <a href="tel:181"><button class="secondary">👩 Women 181</button></a>
+  <a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
 </div>
 
 <footer>
-  Designed and Developed by <strong>Elite 7</strong>
+Designed and Developed by <strong>Elite 7</strong>
 </footer>
 
+</div>
+
 <script>
-let audioCtx, osc, recognition;
-let lastShake = 0;
-const CONTACT_KEY = "she_shield_primary_contact";
+let audioCtx, osc;
+let countdownTimer;
 
-/* ENABLE SYSTEM — FIXED */
 function enableSystem(){
-  document.getElementById("enableScreen").style.display="none";
-
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  audioCtx = new (window.AudioContext||webkitAudioContext)();
   audioCtx.resume();
-
-  if (typeof DeviceMotionEvent !== "undefined" &&
-      typeof DeviceMotionEvent.requestPermission === "function") {
-    DeviceMotionEvent.requestPermission().catch(()=>{});
-  }
-
+  document.getElementById("enableScreen").style.display="none";
   initShake();
-  loadContact();
-  setStatus("System enabled");
+  loadContacts();
 }
 
-/* SIREN — FIXED */
+/* LOUD SIREN */
 function startSiren(){
-  stopSiren();
+  if(!audioCtx) return;
   osc = audioCtx.createOscillator();
   osc.type="square";
   osc.frequency.setValueAtTime(900,audioCtx.currentTime);
   osc.connect(audioCtx.destination);
   osc.start();
-  flashScreen();
 }
 function stopSiren(){
-  if(osc){osc.stop();osc.disconnect();osc=null;}
+  if(osc) osc.stop();
 }
 
-/* FLASH */
-function flashScreen(){
-  const f=document.getElementById("flash");
-  let i=0;
-  const blink=setInterval(()=>{
-    f.style.opacity=(i%2)?0.8:0;
-    i++;
-    if(i>6){clearInterval(blink);f.style.opacity=0;}
-  },300);
+/* CONTACTS */
+function saveContacts(){
+  const arr=[c1.value,c2.value,c3.value,c4.value,c5.value].filter(x=>x);
+  localStorage.setItem("contacts",JSON.stringify(arr));
+  loadContacts();
+}
+function loadContacts(){
+  const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
+  savedContacts.innerHTML="Saved: "+arr.join(", ");
 }
 
-/* CONTACT */
-function saveContact(){
-  const name=document.getElementById("contactName").value.trim();
-  const phone=document.getElementById("contactPhone").value.trim();
-  if(!name||!phone){alert("Enter name and phone");return;}
-  localStorage.setItem(CONTACT_KEY,JSON.stringify({name,phone}));
-  loadContact();
-}
-function loadContact(){
-  const c=JSON.parse(localStorage.getItem(CONTACT_KEY)||"null");
-  document.getElementById("contactList").innerHTML=
-    c?`<small>${c.name} (${c.phone})</small>`:`<small>No contact saved</small>`;
+/* SEND SOS */
+function sendSOS(){
+  const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
+  if(!arr.length) return alert("No contacts saved");
+  navigator.geolocation.getCurrentPosition(p=>{
+    const msg=`HELP ME!\nLocation: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
+    arr.forEach(n=>{
+      window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`,"_blank");
+    });
+  });
 }
 
-/* SEND WHATSAPP */
-function sendSOS(lat,lon){
-  const c=JSON.parse(localStorage.getItem(CONTACT_KEY)||"null");
-  if(!c){alert("No contact saved");return;}
-  const msg=`I am in danger. My location:\nhttps://maps.google.com/?q=${lat},${lon}`;
-  window.open(`https://wa.me/${c.phone}?text=${encodeURIComponent(msg)}`,"_blank");
-}
-
-/* EMERGENCY SOS */
-function emergencySOS(){
+function triggerSOS(){
   startSiren();
-  navigator.geolocation.getCurrentPosition(p=>{
-    sendSOS(p.coords.latitude,p.coords.longitude);
-  });
+  sendSOS();
 }
 
-/* LIVE LOCATION */
-function shareLiveLocation(){
-  navigator.geolocation.getCurrentPosition(p=>{
-    window.open("https://wa.me/?text="+encodeURIComponent(
-      `My location:\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`
-    ),"_blank");
-  });
+/* COUNTDOWN */
+function startCountdown(){
+  let t=10;
+  countText.innerText="Countdown: "+t;
+  countdownTimer=setInterval(()=>{
+    t--;
+    countText.innerText="Countdown: "+t;
+    if(t<=0){
+      clearInterval(countdownTimer);
+      triggerSOS();
+      countText.innerText="SOS Triggered";
+    }
+  },1000);
 }
 
 /* VOICE SOS */
 function startVoice(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){alert("Voice not supported");return;}
-  recognition=new SR();
-  recognition.onresult=e=>{
+  const SR=window.SpeechRecognition||webkitSpeechRecognition;
+  if(!SR) return alert("Voice not supported");
+  const r=new SR();
+  r.onresult=e=>{
     if(e.results[0][0].transcript.toLowerCase().includes("help")){
-      emergencySOS();
+      triggerSOS();
     }
   };
-  recognition.start();
+  r.start();
 }
 
 /* FAKE CALL */
 function fakeCall(){
   const u=new SpeechSynthesisUtterance(
-    "Hello, where are you? You should have reached by now. "
-    +"Come quickly. Ministers and high officials are here."
+    "Hello. Where are you? Why haven't you reached yet? "+
+    "There are ministers and senior officials here. Come immediately. Bye."
   );
-  u.lang="en-IN";u.pitch=0.7;u.rate=0.9;
+  u.pitch=0.6;
+  u.rate=0.9;
   speechSynthesis.speak(u);
 }
 
-/* SHAKE SOS — WORKING */
+/* SHAKE SOS */
 function initShake(){
+  let last=0;
   window.addEventListener("devicemotion",e=>{
     const a=e.accelerationIncludingGravity;
-    if(!a)return;
+    if(!a) return;
     const g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
     const now=Date.now();
-    if(g>22 && now-lastShake>2000){
-      lastShake=now;
-      emergencySOS();
+    if(g>22 && now-last>2000){
+      last=now;
+      triggerSOS();
     }
   });
 }
 
-/* STATUS */
-function setStatus(t){
-  document.getElementById("status").innerHTML="<small>Status: "+t+"</small>";
+/* LOCATION */
+function shareLocation(){
+  navigator.geolocation.getCurrentPosition(p=>{
+    window.open(`https://wa.me/?text=My location: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
+  });
+}
+
+/* SAFETY TIPS */
+function showTips(){
+  alert(
+    "SAFETY TIPS:\n"+
+    "• Stay alert and confident\n"+
+    "• Target eyes, nose, groin if attacked\n"+
+    "• Use voice loudly to attract attention\n"+
+    "• Run to crowded areas\n"+
+    "• Use She-Shield SOS immediately"
+  );
 }
 </script>
 
