@@ -76,6 +76,12 @@ small{opacity:.7}
   pointer-events:none;
   z-index:9998
 }
+footer{
+  text-align:center;
+  padding:16px;
+  font-size:14px;
+  color:#6b4b3e;
+}
 </style>
 </head>
 
@@ -94,14 +100,14 @@ small{opacity:.7}
 
 <div class="container">
 
-<!-- ✅ LOGO ADDED HERE -->
+<!-- LOGO -->
 <div style="text-align:center;margin-bottom:10px;">
   <img src="logo.png.jpeg" alt="She Shield Logo" style="width:120px;">
 </div>
 
 <h1>She-Shield</h1>
 
-<!-- STEP 1 -->
+<!-- SIREN -->
 <div class="step">
   <span class="badge">STEP 1</span>
   <h3>Siren Alert</h3>
@@ -109,66 +115,188 @@ small{opacity:.7}
   <button class="muted" onclick="stopSiren()">Stop Siren</button>
 </div>
 
-<!-- STEP 2 -->
+<!-- EMERGENCY SOS -->
 <div class="step">
   <span class="badge">STEP 2</span>
   <h3>Emergency SOS</h3>
   <button class="primary" onclick="emergencySOS()">🚨 Emergency SOS</button>
 </div>
 
-<!-- STEP 3 -->
+<!-- LIVE LOCATION -->
 <div class="step">
   <span class="badge">STEP 3</span>
   <h3>Live Location</h3>
   <button class="secondary" onclick="shareLiveLocation()">📍 Share Live Location</button>
 </div>
 
-<!-- STEP 4 -->
+<!-- CONTACT -->
 <div class="step">
   <span class="badge">STEP 4</span>
   <h3>Trusted Contact</h3>
   <input id="contactName" placeholder="Contact Name">
   <input id="contactPhone" placeholder="Phone (with country code)">
-  <button class="secondary" onclick="saveContact()">💾 Save as Primary Contact</button>
+  <button class="secondary" onclick="saveContact()">💾 Save Contact</button>
   <div id="contactList"><small>No contact saved</small></div>
 </div>
 
-<!-- STEP 5 -->
+<!-- VOICE SOS -->
 <div class="step">
   <span class="badge">STEP 5</span>
   <h3>Voice SOS</h3>
   <button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
 </div>
 
-<!-- STEP 6 -->
+<!-- FAKE CALL -->
 <div class="step">
   <span class="badge">STEP 6</span>
-  <h3>Auto SOS Countdown</h3>
-  <button class="primary" onclick="startCountdown()">⏳ Start 10s Countdown</button>
-  <button class="muted" onclick="cancelCountdown()">Cancel</button>
-  <p id="countdownText"><small>Status: Not started</small></p>
-</div>
-
-<!-- STEP 7 -->
-<div class="step">
-  <span class="badge">STEP 7</span>
   <h3>Fake Call</h3>
   <button class="secondary" onclick="fakeCall()">📞 Fake Incoming Call</button>
 </div>
 
-<!-- STEP 8 -->
+<!-- HELPLINES -->
 <div class="step">
-  <span class="badge">STEP 8</span>
+  <span class="badge">STEP 7</span>
   <h3>Emergency Helplines</h3>
   <a href="tel:112"><button class="primary">🚔 Police 112</button></a><br><br>
-  <a href="tel:181"><button class="secondary">👩 Women Helpline 181</button></a>
+  <a href="tel:181"><button class="secondary">👩 Women Helpline 181</button></a><br><br>
+  <a href="tel:108"><button class="secondary">🚑 Ambulance 108</button></a>
 </div>
 
 <div id="status"><small>Status: Ready</small></div>
+
 </div>
 
+<footer>
+  Designed and Developed by <strong>Elite 7</strong>
+</footer>
+
 <script>
-/* (Your entire JS remains exactly the same – unchanged) */
+let audioCtx, osc, recognition;
+let lastShake = 0;
+const CONTACT_KEY = "she_shield_primary_contact";
+
+/* ENABLE SYSTEM — FIXED */
+function enableSystem(){
+  document.getElementById("enableScreen").style.display="none";
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  audioCtx.resume();
+
+  if (typeof DeviceMotionEvent !== "undefined" &&
+      typeof DeviceMotionEvent.requestPermission === "function") {
+    DeviceMotionEvent.requestPermission().catch(()=>{});
+  }
+
+  initShake();
+  loadContact();
+  setStatus("System enabled");
+}
+
+/* SIREN — FIXED */
+function startSiren(){
+  stopSiren();
+  osc = audioCtx.createOscillator();
+  osc.type="square";
+  osc.frequency.setValueAtTime(900,audioCtx.currentTime);
+  osc.connect(audioCtx.destination);
+  osc.start();
+  flashScreen();
+}
+function stopSiren(){
+  if(osc){osc.stop();osc.disconnect();osc=null;}
+}
+
+/* FLASH */
+function flashScreen(){
+  const f=document.getElementById("flash");
+  let i=0;
+  const blink=setInterval(()=>{
+    f.style.opacity=(i%2)?0.8:0;
+    i++;
+    if(i>6){clearInterval(blink);f.style.opacity=0;}
+  },300);
+}
+
+/* CONTACT */
+function saveContact(){
+  const name=document.getElementById("contactName").value.trim();
+  const phone=document.getElementById("contactPhone").value.trim();
+  if(!name||!phone){alert("Enter name and phone");return;}
+  localStorage.setItem(CONTACT_KEY,JSON.stringify({name,phone}));
+  loadContact();
+}
+function loadContact(){
+  const c=JSON.parse(localStorage.getItem(CONTACT_KEY)||"null");
+  document.getElementById("contactList").innerHTML=
+    c?`<small>${c.name} (${c.phone})</small>`:`<small>No contact saved</small>`;
+}
+
+/* SEND WHATSAPP */
+function sendSOS(lat,lon){
+  const c=JSON.parse(localStorage.getItem(CONTACT_KEY)||"null");
+  if(!c){alert("No contact saved");return;}
+  const msg=`I am in danger. My location:\nhttps://maps.google.com/?q=${lat},${lon}`;
+  window.open(`https://wa.me/${c.phone}?text=${encodeURIComponent(msg)}`,"_blank");
+}
+
+/* EMERGENCY SOS */
+function emergencySOS(){
+  startSiren();
+  navigator.geolocation.getCurrentPosition(p=>{
+    sendSOS(p.coords.latitude,p.coords.longitude);
+  });
+}
+
+/* LIVE LOCATION */
+function shareLiveLocation(){
+  navigator.geolocation.getCurrentPosition(p=>{
+    window.open("https://wa.me/?text="+encodeURIComponent(
+      `My location:\nhttps://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`
+    ),"_blank");
+  });
+}
+
+/* VOICE SOS */
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert("Voice not supported");return;}
+  recognition=new SR();
+  recognition.onresult=e=>{
+    if(e.results[0][0].transcript.toLowerCase().includes("help")){
+      emergencySOS();
+    }
+  };
+  recognition.start();
+}
+
+/* FAKE CALL */
+function fakeCall(){
+  const u=new SpeechSynthesisUtterance(
+    "Hello, where are you? You should have reached by now. "
+    +"Come quickly. Ministers and high officials are here."
+  );
+  u.lang="en-IN";u.pitch=0.7;u.rate=0.9;
+  speechSynthesis.speak(u);
+}
+
+/* SHAKE SOS — WORKING */
+function initShake(){
+  window.addEventListener("devicemotion",e=>{
+    const a=e.accelerationIncludingGravity;
+    if(!a)return;
+    const g=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+    const now=Date.now();
+    if(g>22 && now-lastShake>2000){
+      lastShake=now;
+      emergencySOS();
+    }
+  });
+}
+
+/* STATUS */
+function setStatus(t){
+  document.getElementById("status").innerHTML="<small>Status: "+t+"</small>";
+}
 </script>
 
 </body>
