@@ -7,49 +7,53 @@
 
 body{
 margin:0;
-font-family:Poppins, sans-serif;
-background:#f6e9e3;
+font-family:Arial;
+background:#0f0f12;
+color:white;
 }
+
+/* HEADER */
 
 .header{
 text-align:center;
-padding:20px;
-background:white;
-border-bottom-left-radius:25px;
-border-bottom-right-radius:25px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
+padding:15px;
 }
 
 .header img{
-width:120px;
+width:80px;   /* smaller logo */
 }
+
+/* GRID */
 
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:15px;
-padding:20px;
+padding:15px;
 }
 
 .tile{
-background:white;
-padding:20px;
-border-radius:20px;
+background:#1b1b22;
+padding:18px;
+border-radius:18px;
 text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-font-weight:bold;
+font-size:15px;
+box-shadow:0 0 15px rgba(255,120,90,0.3);
 }
 
-.bottomMenu{
-position:fixed;
-bottom:0;
-width:100%;
-background:white;
-display:flex;
-justify-content:space-around;
+/* BUTTON */
+
+button{
+background:#ff7a4d;
+border:none;
 padding:12px;
-box-shadow:0 -3px 10px rgba(0,0,0,0.1);
+color:white;
+border-radius:10px;
+margin-top:10px;
+width:100%;
 }
+
+/* SCREENS */
 
 .screen{
 display:none;
@@ -58,19 +62,45 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:#fff;
+background:#0f0f12;
 padding:20px;
 overflow:auto;
 }
 
-button{
-background:#e58c5c;
-border:none;
-padding:12px;
-color:white;
-border-radius:10px;
-margin:10px 0;
+/* FAKE CALL UI */
+
+#fakeCallScreen{
+display:none;
+position:fixed;
+top:0;
+left:0;
 width:100%;
+height:100%;
+background:black;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+}
+
+.callbtn{
+width:80px;
+height:80px;
+border-radius:50%;
+margin:20px;
+font-size:20px;
+}
+
+.green{background:#2ecc71;}
+.red{background:#e74c3c;}
+
+.bottomMenu{
+position:fixed;
+bottom:0;
+width:100%;
+background:#15151c;
+display:flex;
+justify-content:space-around;
+padding:12px;
 }
 
 </style>
@@ -88,33 +118,26 @@ width:100%;
 
 <div class="grid">
 
-<div class="tile" onclick="sendSOS()">🚨 SOS</div>
-<div class="tile" onclick="startSiren()">🔊 Siren</div>
+<div class="tile" onclick="sendSOS()">🚨 Emergency SOS</div>
+<div class="tile" onclick="autoSOS()">⏳ Auto SOS</div>
+<div class="tile" onclick="startSiren()">🔊 Start Siren</div>
+<div class="tile" onclick="stopSiren()">🔇 Stop Siren</div>
+<div class="tile" onclick="startVoice()">🎤 Voice Help</div>
 <div class="tile" onclick="fakeCall()">📞 Fake Call</div>
 <div class="tile" onclick="openScreen('msgScreen')">💬 Fake Message</div>
-<div class="tile" onclick="startVoice()">🎤 Voice Help</div>
 <div class="tile" onclick="openScreen('contactScreen')">👥 Contacts</div>
 
 </div>
 
 <div class="bottomMenu">
 <div onclick="openScreen('helplineScreen')">📞 Helplines</div>
-<div onclick="openScreen('rulesScreen')">🛡 Safety Rules</div>
+<div onclick="openScreen('rulesScreen')">🛡 Rules</div>
 <div onclick="openScreen('serviceScreen')">💬 Support</div>
 </div>
 
 </div>
 
-<!-- FAKE MESSAGE SCREEN -->
-<div id="msgScreen" class="screen">
-<h3>Fake Message</h3>
-<input id="msg" placeholder="Type message">
-<button onclick="showMsg()">Send</button>
-<p id="showmsg"></p>
-<button onclick="back()">Back</button>
-</div>
-
-<!-- CONTACT SCREEN -->
+<!-- CONTACTS -->
 <div id="contactScreen" class="screen">
 <h3>Trusted Contacts</h3>
 <input id="name" placeholder="Name">
@@ -124,36 +147,50 @@ width:100%;
 <button onclick="back()">Back</button>
 </div>
 
-<!-- HELPLINE SCREEN -->
+<!-- FAKE MESSAGE -->
+<div id="msgScreen" class="screen">
+<h3>Fake Message</h3>
+<input id="msg" placeholder="Type message">
+<button onclick="showMsg()">Send</button>
+<p id="showmsg"></p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- HELPLINES -->
 <div id="helplineScreen" class="screen">
-<h3>Emergency Helplines</h3>
+<h3>Emergency Numbers</h3>
 <p>🚓 Police: 100</p>
 <p>👩 Women Helpline: 181</p>
 <p>🚑 Ambulance: 108</p>
 <button onclick="back()">Back</button>
 </div>
 
-<!-- RULES SCREEN -->
+<!-- RULES -->
 <div id="rulesScreen" class="screen">
 <h3>Women Safety Rules</h3>
-<p>✔ Share location with trusted people</p>
-<p>✔ Avoid isolated routes</p>
-<p>✔ Stay alert in public places</p>
-<p>✔ Use SOS when unsafe</p>
+<p>✔ Share live location</p>
+<p>✔ Avoid isolated areas</p>
+<p>✔ Stay alert</p>
+<p>✔ Use SOS quickly</p>
 <button onclick="back()">Back</button>
 </div>
 
-<!-- CUSTOMER SERVICE -->
+<!-- SUPPORT -->
 <div id="serviceScreen" class="screen">
-<h3>Customer Support</h3>
-<p>Select Issue:</p>
-<p>1. App Not Working</p>
-<p>2. SOS Issue</p>
-<p>3. Contact Problem</p>
-<p>4. Voice Help Error</p>
-<textarea placeholder="Describe your issue"></textarea>
+<h3>Customer Service</h3>
+<p>1. SOS Issue</p>
+<p>2. Voice Problem</p>
+<p>3. Contact Error</p>
+<textarea placeholder="Describe issue"></textarea>
 <button onclick="alert('Thank you for contacting She-Shield')">Submit</button>
 <button onclick="back()">Back</button>
+</div>
+
+<!-- FAKE CALL SCREEN -->
+<div id="fakeCallScreen">
+<h2>📞 Mom Calling...</h2>
+<button class="callbtn green" onclick="acceptCall()">✔</button>
+<button class="callbtn red" onclick="endCall()">✖</button>
 </div>
 
 <audio id="sirenAudio" loop>
@@ -165,45 +202,51 @@ width:100%;
 let contacts=[];
 
 function openScreen(id){
-document.getElementById("home").style.display="none";
+home.style.display="none";
 document.getElementById(id).style.display="block";
 }
 
 function back(){
 document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
-document.getElementById("home").style.display="block";
+home.style.display="block";
 }
 
 function saveContact(){
-let n=name.value;
-let p=phone.value;
 let li=document.createElement("li");
-li.innerText=n+" - "+p;
+li.innerText=name.value+" - "+phone.value;
 list.appendChild(li);
 }
 
-function startSiren(){
-sirenAudio.play();
-}
+function startSiren(){sirenAudio.play();}
+function stopSiren(){sirenAudio.pause();}
 
 function sendSOS(){
 startSiren();
-navigator.geolocation.getCurrentPosition(pos=>{
-alert("Location Shared: "+pos.coords.latitude+","+pos.coords.longitude);
+navigator.geolocation.getCurrentPosition(p=>{
+alert("Location Shared:\n"+p.coords.latitude+","+p.coords.longitude);
 });
 }
 
-function fakeCall(){
-alert("📞 Mom Calling...");
+function autoSOS(){
+let c=10;
+let t=setInterval(()=>{
+c--;
+if(c==0){clearInterval(t);sendSOS();}
+},1000);
 }
 
-function showMsg(){
-showmsg.innerText=msg.value;
+function fakeCall(){
+fakeCallScreen.style.display="flex";
 }
+
+function acceptCall(){endCall();}
+function endCall(){fakeCallScreen.style.display="none";}
+
+function showMsg(){showmsg.innerText=msg.value;}
 
 function startVoice(){
 const rec=new webkitSpeechRecognition();
-rec.onresult=function(e){
+rec.onresult=e=>{
 if(e.results[0][0].transcript.toLowerCase().includes("help me")){
 sendSOS();
 }
