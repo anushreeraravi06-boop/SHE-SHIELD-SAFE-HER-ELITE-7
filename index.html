@@ -1,286 +1,238 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>She-Shield</title>
+<title>She Shield</title>
 
 <style>
+
 body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#f5efe6;
-  color:#3a2c2c;
+margin:0;
+font-family:Arial;
+background:linear-gradient(to bottom,#fde9e3,#f4ede7);
+text-align:center;
 }
+
 .container{
-  max-width:430px;
-  margin:auto;
-  padding:16px;
+max-width:420px;
+margin:auto;
+padding:15px;
 }
-header{text-align:center}
-header img{width:90px;margin-bottom:6px}
-h1{color:#e07a5f;margin:6px 0 16px}
+
+.logo{
+width:160px;
+margin-top:20px;
+}
+
+h1{color:#d46a4d;}
 
 .card{
-  background:#fffaf3;
-  padding:14px;
-  border-radius:14px;
-  margin-bottom:14px;
-  box-shadow:0 6px 16px rgba(0,0,0,.1);
+background:white;
+padding:15px;
+margin:15px 0;
+border-radius:18px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-.card h3{color:#e07a5f;margin-top:0}
 
 button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:6px;
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+background:linear-gradient(45deg,#e58c5c,#f3a36e);
+color:white;
+font-size:16px;
+font-weight:bold;
 }
-.primary{background:#e07a5f;color:#fff}
-.secondary{background:#f4a261;color:#fff}
-.muted{background:#ddd}
 
 input{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  margin-bottom:6px;
+width:90%;
+padding:10px;
+margin:5px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
-footer{
-  text-align:center;
-  padding:14px;
-  font-size:14px;
-  color:#7a5c3a;
+ul{list-style:none;padding:0;}
+
+/* FAKE CALL SCREEN */
+
+#fakeCallScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#111;
+color:white;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:999;
 }
 
-/* Enable screen */
-#enableScreen{
-  position:fixed;
-  inset:0;
-  background:#000000cc;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-#enableBox{
-  background:#fffaf3;
-  padding:20px;
-  border-radius:14px;
-  text-align:center;
+.callbtn{
+width:80px;
+height:80px;
+border-radius:50%;
+font-size:20px;
+margin:20px;
 }
 
-/* Safety tips screen */
-#tipsScreen{
-  position:fixed;
-  inset:0;
-  background:#000;
-  color:#fff;
-  display:none;
-  z-index:10000;
-  padding:20px;
-  overflow-y:auto;
-}
-#tipsScreen h2{color:#f4a261;text-align:center}
-#closeTips{
-  background:#e07a5f;
-  color:#fff;
-  padding:10px;
-  border-radius:10px;
-  text-align:center;
-  margin-bottom:14px;
-}
+.green{background:#2ecc71;}
+.red{background:#e74c3c;}
+
 </style>
 </head>
 
 <body>
 
-<!-- ENABLE -->
-<div id="enableScreen">
-  <div id="enableBox">
-    <h2>Enable Safety System</h2>
-    <p>Required for sound, motion & location</p>
-    <button class="primary" onclick="enableSystem()">Enable</button>
-  </div>
-</div>
-
-<!-- SAFETY TIPS FULL SCREEN -->
-<div id="tipsScreen">
-  <div id="closeTips" onclick="closeTips()">⬅ Close</div>
-  <h2>Personal Safety & Self-Defense Tips</h2>
-  <ol>
-    <li>Stay alert and avoid distractions like headphones.</li>
-    <li>Trust your instincts. If something feels wrong, leave.</li>
-    <li>Walk confidently and maintain eye contact.</li>
-    <li>Avoid isolated or poorly lit areas.</li>
-    <li>Keep emergency numbers on speed dial.</li>
-    <li>Target vulnerable areas: eyes, nose, throat, groin.</li>
-    <li>Use loud voice to attract attention.</li>
-    <li>Carry personal safety tools if legal.</li>
-    <li>Share live location with trusted contacts.</li>
-    <li>Change routines regularly.</li>
-    <li>Stay near crowds when feeling unsafe.</li>
-    <li>Lock doors and windows properly.</li>
-    <li>Learn basic self-defense techniques.</li>
-    <li>Do not reveal personal information to strangers.</li>
-    <li>Use She-Shield SOS immediately when in danger.</li>
-  </ol>
-</div>
-
 <div class="container">
 
-<header>
-  <img src="logo.png.jpeg">
-  <h1>She-Shield</h1>
-</header>
+<img src="logo.png.jpeg" class="logo">
+<h1>She-Shield</h1>
 
 <div class="card">
-  <h3>Siren Alert</h3>
-  <button class="primary" onclick="startSiren()">🔊 Start Siren</button>
-  <button class="muted" onclick="stopSiren()">Stop Siren</button>
-</div>
-
-<div class="card">
-  <h3>Emergency SOS</h3>
-  <button class="primary" onclick="triggerSOS()">🚨 Emergency SOS</button>
+<h3>Trusted Contacts</h3>
+<input id="name" placeholder="Contact Name">
+<input id="phone" placeholder="Phone Number">
+<button onclick="saveContact()">Save Contact</button>
+<ul id="list"></ul>
 </div>
 
 <div class="card">
-  <h3>Auto SOS Countdown</h3>
-  <button class="secondary" onclick="startCountdown()">⏳ Start 10-Second Countdown</button>
-  <p id="countText">Not started</p>
+<h3>Siren Alert</h3>
+<button onclick="startSiren()">Start Siren</button>
+<button onclick="stopSiren()">Stop Siren</button>
 </div>
 
 <div class="card">
-  <h3>Voice SOS</h3>
-  <button class="secondary" onclick="startVoice()">🎙️ Say “HELP”</button>
+<h3>Emergency SOS</h3>
+<button onclick="sendSOS()">Emergency SOS</button>
+<button onclick="autoSOS()">Auto Count SOS (10s)</button>
 </div>
 
 <div class="card">
-  <h3>Fake Incoming Call</h3>
-  <button class="secondary" onclick="fakeCall()">📞 Fake Call</button>
+<h3>Voice Help</h3>
+<button onclick="startVoice()">Say "Help Me"</button>
 </div>
 
 <div class="card">
-  <h3>Live Location</h3>
-  <button class="secondary" onclick="shareLocation()">📍 Share Location</button>
+<h3>Fake Call</h3>
+<button onclick="fakeCall()">Open Fake Call</button>
 </div>
 
 <div class="card">
-  <h3>Safety Tips</h3>
-  <button class="muted" onclick="openTips()">🛡️ View Safety Tips</button>
+<h3>Fake Message</h3>
+<input id="msg" placeholder="Type Message">
+<button onclick="fakeMsg()">Send</button>
+<p id="showmsg"></p>
 </div>
 
-<!-- CONTACTS MOVED DOWN -->
-<div class="card">
-  <h3>Trusted Contacts (Max 5)</h3>
-  <input id="c1" placeholder="Contact 1 (with country code)">
-  <input id="c2" placeholder="Contact 2">
-  <input id="c3" placeholder="Contact 3">
-  <input id="c4" placeholder="Contact 4">
-  <input id="c5" placeholder="Contact 5">
-  <button class="secondary" onclick="saveContacts()">Save Contacts</button>
-  <div id="savedContacts"></div>
 </div>
 
-<div class="card">
-  <h3>Emergency Helplines</h3>
-  <a href="tel:112"><button class="primary">🚔 Police 112</button></a>
-  <a href="tel:181"><button class="secondary">👩 Women 181</button></a>
-  <a href="tel:108"><button class="muted">🚑 Ambulance 108</button></a>
+<!-- REALISTIC FAKE CALL SCREEN -->
+<div id="fakeCallScreen">
+<h2>📞 Mom Calling...</h2>
+<button class="callbtn green" onclick="acceptCall()">✔</button>
+<button class="callbtn red" onclick="endCall()">✖</button>
 </div>
 
-<footer>
-Designed and Developed by <strong>Elite 7</strong>
-</footer>
-
-</div>
+<audio id="sirenAudio" loop>
+<source src="https://www.soundjay.com/misc/sounds/siren-01.mp3">
+</audio>
 
 <script>
-let audioCtx, osc, countdownTimer;
 
-function enableSystem(){
-  audioCtx=new (window.AudioContext||webkitAudioContext)();
-  audioCtx.resume();
-  document.getElementById("enableScreen").style.display="none";
-  initShake(); loadContacts();
+let contacts=[];
+
+function saveContact(){
+let n=name.value;
+let p=phone.value;
+if(n==""||p==""){alert("Enter details");return;}
+contacts.push({n,p});
+let li=document.createElement("li");
+li.innerText=n+" - "+p;
+list.appendChild(li);
 }
 
-function startSiren(){
-  osc=audioCtx.createOscillator();
-  osc.type="square";
-  osc.frequency.value=900;
-  osc.connect(audioCtx.destination);
-  osc.start();
-}
-function stopSiren(){ if(osc) osc.stop(); }
+function startSiren(){sirenAudio.play();}
+function stopSiren(){sirenAudio.pause();}
 
-function saveContacts(){
-  const arr=[c1.value,c2.value,c3.value,c4.value,c5.value].filter(x=>x);
-  localStorage.setItem("contacts",JSON.stringify(arr));
-  loadContacts();
-}
-function loadContacts(){
-  const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
-  savedContacts.innerText=arr.length?"Saved: "+arr.join(", "):"No contacts saved";
+function getLocation(){
+navigator.geolocation.getCurrentPosition(pos=>{
+alert("Location Shared:\n"+pos.coords.latitude+","+pos.coords.longitude);
+});
 }
 
 function sendSOS(){
-  const arr=JSON.parse(localStorage.getItem("contacts")||"[]");
-  if(!arr.length) return alert("No contacts saved");
-  navigator.geolocation.getCurrentPosition(p=>{
-    const msg=`HELP ME!\nLocation: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`;
-    arr.forEach(n=>window.open(`https://wa.me/${n}?text=${encodeURIComponent(msg)}`));
-  });
-}
-function triggerSOS(){ startSiren(); sendSOS(); }
-
-function startCountdown(){
-  let t=10;
-  countText.innerText="Countdown: "+t;
-  countdownTimer=setInterval(()=>{
-    t--; countText.innerText="Countdown: "+t;
-    if(t<=0){ clearInterval(countdownTimer); triggerSOS(); }
-  },1000);
+startSiren();
+getLocation();
 }
 
-function startVoice(){
-  const SR=window.SpeechRecognition||webkitSpeechRecognition;
-  const r=new SR();
-  r.onresult=e=>{ if(e.results[0][0].transcript.toLowerCase().includes("help")) triggerSOS(); };
-  r.start();
+function autoSOS(){
+let c=10;
+let timer=setInterval(()=>{
+c--;
+if(c==0){
+clearInterval(timer);
+sendSOS();
 }
+},1000);
+}
+
+/* REAL FAKE CALL */
 
 function fakeCall(){
-  speechSynthesis.speak(new SpeechSynthesisUtterance(
-    "Hello, where are you? Ministers and senior officials are waiting. Come immediately. Bye."
-  ));
+document.getElementById("fakeCallScreen").style.display="flex";
 }
 
-function initShake(){
-  let last=0;
-  window.addEventListener("devicemotion",e=>{
-    const a=e.accelerationIncludingGravity;
-    if(Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z)>22 && Date.now()-last>2000){
-      last=Date.now(); triggerSOS();
-    }
-  });
+function acceptCall(){
+alert("Call Connected...");
+endCall();
 }
 
-function shareLocation(){
-  navigator.geolocation.getCurrentPosition(p=>{
-    window.open(`https://wa.me/?text=My location: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
-  });
+function endCall(){
+document.getElementById("fakeCallScreen").style.display="none";
 }
 
-function openTips(){ tipsScreen.style.display="block"; }
-function closeTips(){ tipsScreen.style.display="none"; }
+/* FAKE MESSAGE */
+
+function fakeMsg(){
+showmsg.innerText=msg.value;
+}
+
+/* VOICE HELP */
+
+function startVoice(){
+const rec=new webkitSpeechRecognition();
+rec.onresult=function(e){
+let text=e.results[0][0].transcript.toLowerCase();
+if(text.includes("help me")){
+sendSOS();
+}
+}
+rec.start();
+}
+
+/* SHAKE SOS */
+
+let lastX,lastY,lastZ;
+window.addEventListener("devicemotion",e=>{
+let a=e.accelerationIncludingGravity;
+if(!lastX){
+lastX=a.x;lastY=a.y;lastZ=a.z;
+return;
+}
+let diff=Math.abs(a.x+a.y+a.z-lastX-lastY-lastZ);
+if(diff>25){
+sendSOS();
+}
+lastX=a.x;lastY=a.y;lastZ=a.z;
+});
+
 </script>
 
 </body>
