@@ -2,142 +2,158 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>She Shield</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial;
-background:linear-gradient(to bottom,#fde9e3,#f4ede7);
+font-family:Poppins, sans-serif;
+background:#f6e9e3;
+}
+
+.header{
 text-align:center;
-}
-
-.container{
-max-width:420px;
-margin:auto;
-padding:15px;
-}
-
-.logo{
-width:160px;
-margin-top:20px;
-}
-
-h1{color:#d46a4d;}
-
-.card{
+padding:20px;
 background:white;
-padding:15px;
-margin:15px 0;
-border-radius:18px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
+border-bottom-left-radius:25px;
+border-bottom-right-radius:25px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
 
-button{
-width:100%;
-padding:14px;
-margin-top:10px;
-border:none;
-border-radius:12px;
-background:linear-gradient(45deg,#e58c5c,#f3a36e);
-color:white;
-font-size:16px;
+.header img{
+width:120px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+padding:20px;
+}
+
+.tile{
+background:white;
+padding:20px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 font-weight:bold;
 }
 
-input{
-width:90%;
-padding:10px;
-margin:5px;
-border-radius:8px;
-border:1px solid #ccc;
+.bottomMenu{
+position:fixed;
+bottom:0;
+width:100%;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:12px;
+box-shadow:0 -3px 10px rgba(0,0,0,0.1);
 }
 
-ul{list-style:none;padding:0;}
-
-/* FAKE CALL SCREEN */
-
-#fakeCallScreen{
+.screen{
+display:none;
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
-background:#111;
+background:#fff;
+padding:20px;
+overflow:auto;
+}
+
+button{
+background:#e58c5c;
+border:none;
+padding:12px;
 color:white;
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-z-index:999;
+border-radius:10px;
+margin:10px 0;
+width:100%;
 }
-
-.callbtn{
-width:80px;
-height:80px;
-border-radius:50%;
-font-size:20px;
-margin:20px;
-}
-
-.green{background:#2ecc71;}
-.red{background:#e74c3c;}
 
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- HOME -->
+<div id="home">
 
-<img src="logo.png.jpeg" class="logo">
-<h1>She-Shield</h1>
-
-<div class="card">
-<h3>Trusted Contacts</h3>
-<input id="name" placeholder="Contact Name">
-<input id="phone" placeholder="Phone Number">
-<button onclick="saveContact()">Save Contact</button>
-<ul id="list"></ul>
+<div class="header">
+<img src="logo.png.jpeg">
+<h2>She-Shield</h2>
 </div>
 
-<div class="card">
-<h3>Siren Alert</h3>
-<button onclick="startSiren()">Start Siren</button>
-<button onclick="stopSiren()">Stop Siren</button>
+<div class="grid">
+
+<div class="tile" onclick="sendSOS()">🚨 SOS</div>
+<div class="tile" onclick="startSiren()">🔊 Siren</div>
+<div class="tile" onclick="fakeCall()">📞 Fake Call</div>
+<div class="tile" onclick="openScreen('msgScreen')">💬 Fake Message</div>
+<div class="tile" onclick="startVoice()">🎤 Voice Help</div>
+<div class="tile" onclick="openScreen('contactScreen')">👥 Contacts</div>
+
 </div>
 
-<div class="card">
-<h3>Emergency SOS</h3>
-<button onclick="sendSOS()">Emergency SOS</button>
-<button onclick="autoSOS()">Auto Count SOS (10s)</button>
+<div class="bottomMenu">
+<div onclick="openScreen('helplineScreen')">📞 Helplines</div>
+<div onclick="openScreen('rulesScreen')">🛡 Safety Rules</div>
+<div onclick="openScreen('serviceScreen')">💬 Support</div>
 </div>
 
-<div class="card">
-<h3>Voice Help</h3>
-<button onclick="startVoice()">Say "Help Me"</button>
 </div>
 
-<div class="card">
-<h3>Fake Call</h3>
-<button onclick="fakeCall()">Open Fake Call</button>
-</div>
-
-<div class="card">
+<!-- FAKE MESSAGE SCREEN -->
+<div id="msgScreen" class="screen">
 <h3>Fake Message</h3>
-<input id="msg" placeholder="Type Message">
-<button onclick="fakeMsg()">Send</button>
+<input id="msg" placeholder="Type message">
+<button onclick="showMsg()">Send</button>
 <p id="showmsg"></p>
+<button onclick="back()">Back</button>
 </div>
 
+<!-- CONTACT SCREEN -->
+<div id="contactScreen" class="screen">
+<h3>Trusted Contacts</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<button onclick="saveContact()">Save</button>
+<ul id="list"></ul>
+<button onclick="back()">Back</button>
 </div>
 
-<!-- REALISTIC FAKE CALL SCREEN -->
-<div id="fakeCallScreen">
-<h2>📞 Mom Calling...</h2>
-<button class="callbtn green" onclick="acceptCall()">✔</button>
-<button class="callbtn red" onclick="endCall()">✖</button>
+<!-- HELPLINE SCREEN -->
+<div id="helplineScreen" class="screen">
+<h3>Emergency Helplines</h3>
+<p>🚓 Police: 100</p>
+<p>👩 Women Helpline: 181</p>
+<p>🚑 Ambulance: 108</p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- RULES SCREEN -->
+<div id="rulesScreen" class="screen">
+<h3>Women Safety Rules</h3>
+<p>✔ Share location with trusted people</p>
+<p>✔ Avoid isolated routes</p>
+<p>✔ Stay alert in public places</p>
+<p>✔ Use SOS when unsafe</p>
+<button onclick="back()">Back</button>
+</div>
+
+<!-- CUSTOMER SERVICE -->
+<div id="serviceScreen" class="screen">
+<h3>Customer Support</h3>
+<p>Select Issue:</p>
+<p>1. App Not Working</p>
+<p>2. SOS Issue</p>
+<p>3. Contact Problem</p>
+<p>4. Voice Help Error</p>
+<textarea placeholder="Describe your issue"></textarea>
+<button onclick="alert('Thank you for contacting She-Shield')">Submit</button>
+<button onclick="back()">Back</button>
 </div>
 
 <audio id="sirenAudio" loop>
@@ -148,69 +164,47 @@ margin:20px;
 
 let contacts=[];
 
+function openScreen(id){
+document.getElementById("home").style.display="none";
+document.getElementById(id).style.display="block";
+}
+
+function back(){
+document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+document.getElementById("home").style.display="block";
+}
+
 function saveContact(){
 let n=name.value;
 let p=phone.value;
-if(n==""||p==""){alert("Enter details");return;}
-contacts.push({n,p});
 let li=document.createElement("li");
 li.innerText=n+" - "+p;
 list.appendChild(li);
 }
 
-function startSiren(){sirenAudio.play();}
-function stopSiren(){sirenAudio.pause();}
-
-function getLocation(){
-navigator.geolocation.getCurrentPosition(pos=>{
-alert("Location Shared:\n"+pos.coords.latitude+","+pos.coords.longitude);
-});
+function startSiren(){
+sirenAudio.play();
 }
 
 function sendSOS(){
 startSiren();
-getLocation();
+navigator.geolocation.getCurrentPosition(pos=>{
+alert("Location Shared: "+pos.coords.latitude+","+pos.coords.longitude);
+});
 }
-
-function autoSOS(){
-let c=10;
-let timer=setInterval(()=>{
-c--;
-if(c==0){
-clearInterval(timer);
-sendSOS();
-}
-},1000);
-}
-
-/* REAL FAKE CALL */
 
 function fakeCall(){
-document.getElementById("fakeCallScreen").style.display="flex";
+alert("📞 Mom Calling...");
 }
 
-function acceptCall(){
-alert("Call Connected...");
-endCall();
-}
-
-function endCall(){
-document.getElementById("fakeCallScreen").style.display="none";
-}
-
-/* FAKE MESSAGE */
-
-function fakeMsg(){
+function showMsg(){
 showmsg.innerText=msg.value;
 }
-
-/* VOICE HELP */
 
 function startVoice(){
 const rec=new webkitSpeechRecognition();
 rec.onresult=function(e){
-let text=e.results[0][0].transcript.toLowerCase();
-if(text.includes("help me")){
+if(e.results[0][0].transcript.toLowerCase().includes("help me")){
 sendSOS();
 }
 }
@@ -218,18 +212,12 @@ rec.start();
 }
 
 /* SHAKE SOS */
-
 let lastX,lastY,lastZ;
 window.addEventListener("devicemotion",e=>{
 let a=e.accelerationIncludingGravity;
-if(!lastX){
-lastX=a.x;lastY=a.y;lastZ=a.z;
-return;
-}
+if(!lastX){lastX=a.x;lastY=a.y;lastZ=a.z;return;}
 let diff=Math.abs(a.x+a.y+a.z-lastX-lastY-lastZ);
-if(diff>25){
-sendSOS();
-}
+if(diff>25){sendSOS();}
 lastX=a.x;lastY=a.y;lastZ=a.z;
 });
 
